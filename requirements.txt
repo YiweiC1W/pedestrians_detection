@@ -14,7 +14,6 @@ setuptools==61.2.0
 Sphinx==5.0.2
 sphinx_rtd_theme==1.0.0
 tabulate==0.8.10
-tensorrt==0.0.1.dev5
 thop==0.1.0.post2207010342
 torch==1.12.0
 torchvision==0.13.0
