@@ -8,8 +8,9 @@
 7. pip install -r requirements.txt
 8. git clone https://github.com/Megvii-BaseDetection/YOLOX.git
 9. cd YOLOX
-10. pip install -v -e .  # or  python3 setup.py develop
+10. pip install -v -e .   # or  python3 setup.py develop
 
+!注意上一步最后有一个 '.' 符号  
 
 ## Run
 
