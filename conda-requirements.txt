@@ -11,7 +11,6 @@ libgcc-ng=11.2.0=h1234567_1
 libgomp=11.2.0=h1234567_1
 libstdcxx-ng=11.2.0=h1234567_1
 ncurses=6.3=h5eee18b_3
-numpy=1.23.0=pypi_0
 openssl=1.1.1p=h5eee18b_0
 pip=21.2.4=py38h06a4308_0
 python=3.8.13=h12debd9_0
