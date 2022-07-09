@@ -1,10 +1,11 @@
 ## Installation Guild
-1. git clone
+1. git clone https://github.com/YiweiC1W/pedestrians_detection.git
 2. cd pedestrians_detection
 3. conda create --name 9517gp --file requirements.txt
 4. conda activate 9517gp
-5. cd YOLOX
-6. pip3 install -v -e . 
+5. git clone https://github.com/Megvii-BaseDetection/YOLOX.git
+6. cd YOLOX
+7. pip3 install -v -e . 
 
 
 ## Run
