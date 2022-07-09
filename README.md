@@ -5,7 +5,7 @@
 4. conda activate 9517gp
 5. git clone https://github.com/Megvii-BaseDetection/YOLOX.git
 6. cd YOLOX
-7. pip3 install -v -e . 
+7. pip3 install -v -e .  # or  python3 setup.py develop
 
 
 ## Run
