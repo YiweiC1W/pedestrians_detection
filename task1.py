@@ -10,7 +10,7 @@ from yolox.data.data_augment import ValTransform
 from yolox.utils import fuse_model, get_model_info, postprocess, vis
 
 IMAGE_EXT = [".jpg", ".jpeg", ".webp", ".bmp", ".png"]
-IMAGE_FOLDER_PATH = "//mnt/a/OneDrive/UNSW/COMP9517/Group_Project/train/STEP-ICCV21-02/"
+IMAGE_FOLDER_PATH = "./train/STEP-ICCV21-02/"
 
 
 def make_parser():
