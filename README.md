@@ -1,7 +1,7 @@
 ## Installation Guide 
 1. git clone git@github.com:YiweiC1W/pedestrians_detection.git # or git clone  https://github.com/YiweiC1W/pedestrians_detection.git
 2. cd pedestrians_detection
-3. conda create --name 9517gp --file conda-requirements.txt
+3. conda create --name 9517gp python==3.8.13
 4. conda activate 9517gp
 5. pip install tensorrt
 6. pip install nvidia-pyindex
