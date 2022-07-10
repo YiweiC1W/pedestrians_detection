@@ -113,13 +113,28 @@ def main(exp, args):
         'outputs/', args.name + '/', time.strftime("%Y_%m_%d_%H_%M_%S", current_time)
     )
     result_files = []
-    for image_name in files:
+
+    paths = {} # {person_id: [bbox_1, bbox_2, ...]}
+    for i, image_name in enumerate(files):
 
         img = cv2.imread(image_name)
         img_filename = os.path.basename(image_name)
         img_info = extractor.extract(img, img_filename)
         tracking_info = tracker.update(img, img_info["bboxes"], img_info["scores"])
-        result_image = plot_tracker(img, tracking_info)
+
+        # add path for each person
+        # bbox[0]: x0, bbox[1]: y0, bbox[2]: x1, bbox[3]: y1
+        # bbox[4]: person_id
+        for bbox in tracking_info:
+            person_id = bbox[4]
+            if person_id not in paths:
+                paths[person_id] = [None] * i
+            paths[person_id].append(bbox)
+        for person_id in paths:
+            if len(paths[person_id]) < i + 1:
+                paths[person_id].append(None)
+
+        result_image = plot_tracker(img, tracking_info, paths)
 
         os.makedirs(save_folder, exist_ok=True)
 

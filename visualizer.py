@@ -3,7 +3,7 @@ import numpy as np
 from YOLOX.yolox.utils.visualize import _COLORS
 
 
-def plot_tracker(img, boxes):
+def plot_tracker(img, boxes, paths):
     for i in range(len(boxes)):
         box = boxes[i]
 
@@ -11,11 +11,20 @@ def plot_tracker(img, boxes):
         y0 = int(box[1])
         x1 = int(box[2])
         y1 = int(box[3])
-        id = box[4]
+        person_id = box[4]
 
-        color_ = _COLORS[id % _COLORS.shape[0]]
+        color_ = _COLORS[person_id % _COLORS.shape[0]]
         color = (color_ * 255).astype(np.uint8).tolist()
-        text = '%d' % (id)
+
+        path_history = paths[person_id]
+        for path in path_history:
+            if path is not None:
+                mid_x = int((path[0] + path[2]) / 2)
+                mid_y = int((path[1] + path[3]) / 2)
+                cv2.circle(img, (mid_x, mid_y), 2, color, -1)
+
+
+        text = '%d' % (person_id)
         txt_color = (255, 255, 255)
         font = cv2.FONT_HERSHEY_SIMPLEX
 
