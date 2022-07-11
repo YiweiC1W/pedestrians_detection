@@ -4,7 +4,7 @@ import time
 import torch
 import cv2
 import sys
-sys.path.append(os.getcwd() + '/YOLOX/')
+sys.path.append(os.getcwd() + '/YOLOX')
 
 from yolox.exp import get_exp
 
