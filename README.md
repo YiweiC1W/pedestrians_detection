@@ -34,4 +34,13 @@ or you can use args '--path' to choose your image folder
 ### run example
 python3 task1.py
 
+## 如何更新代码
 
+如果使用pycharm:
+
+pycharm -> git 菜单 -> update project
+
+
+如果使用git 命令行:
+
+git pull
