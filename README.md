@@ -42,4 +42,6 @@ python3 task1.py
 如果使用git 命令行: git pull
 
 
+
+
 如果更新过程中有代码冲突， 尽量使用手动 merge 避免被覆盖
