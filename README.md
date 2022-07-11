@@ -29,21 +29,6 @@ or you can use args '--path' to choose your image folder
 
 '--picture' bool(true or false), if you want to save picture, default is true
 
-'--person' bool(true or false), if you want to save person list, default is true
-
-#### person list data structure
-
-
-
-                "filename": filename, # input image name
-                "x0": x0, # rectangle x0
-                "y0": y0, # rectangle y0
-                "x1": x1, # rectangle x1
-                "y1": y1, # rectangle y1
-                "score": score, # confidence score
-                "mid_x": (x0 + x1) // 2,
-                "mid_y": (y0 + y1) // 2,
-                "mid_xy": ((x0 + x1) // 2, (y0 + y1) // 2)
 
 
 ### run example
