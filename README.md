@@ -32,7 +32,8 @@ or you can use args '--path' to choose your image folder
 
 
 ### run example
-python3 task1.py
+python task1.py
+
 
 ## 如何更新代码
 
@@ -44,4 +45,4 @@ python3 task1.py
 
 
 
-如果更新过程中有代码冲突， 尽量使用手动 merge 避免被覆盖
+如果更新过程中有代码冲突， 尽量使用手动 merge 避免被覆盖。
