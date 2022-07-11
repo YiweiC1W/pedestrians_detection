@@ -12,7 +12,7 @@ from tracker import Tracker
 from visualizer import plot_tracker
 
 IMAGE_EXT = [".jpg", ".jpeg", ".webp", ".bmp", ".png"]
-IMAGE_FOLDER_PATH = "./train/STEP-ICCV21-02/"
+IMAGE_FOLDER_PATH = "./train/STEP-ICCV21-09/"
 
 
 def make_parser():
