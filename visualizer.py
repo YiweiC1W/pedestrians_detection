@@ -17,11 +17,18 @@ def plot_tracker(img, boxes, paths):
         color = (color_ * 255).astype(np.uint8).tolist()
 
         path_history = paths[person_id]
-        for path in path_history:
+        for i, path in enumerate(path_history):
             if path is not None:
-                mid_x = int((path[0] + path[2]) / 2)
-                mid_y = int((path[1] + path[3]) / 2)
-                cv2.circle(img, (mid_x, mid_y), 2, color, -1)
+                current_x = int((path[0] + path[2]) / 2)
+                current_y = int((path[1] + path[3]) / 2)
+
+                for j in range(i, 0, -1):
+                    if path_history[j] is not None:
+                        previous_x = int((path_history[j][0] + path_history[j][2]) / 2)
+                        previous_y = int((path_history[j][1] + path_history[j][3]) / 2)
+                        cv2.line(img, (current_x, current_y), (previous_x, previous_y), color, 2)
+                        current_x = previous_x
+                        current_y = previous_y
 
 
         text = '%d' % (person_id)

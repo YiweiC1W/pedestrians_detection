@@ -45,7 +45,7 @@ def make_parser():
         help="path to weights file"
     )
     parser.add_argument("--conf", default=0.5, type=float, help="confidence threshold")
-    parser.add_argument("--nms", default=0.3, type=float, help="nms threshold")
+    parser.add_argument("--nms", default=0.4, type=float, help="nms threshold")
     parser.add_argument(
         "--video",
         type=bool,
