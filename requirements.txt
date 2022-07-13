@@ -1,5 +1,4 @@
 loguru==0.6.0
-megengine==1.9.1
 ninja==1.10.2.3
 opencv_python==4.5.3.56
 openvino==2022.1.0

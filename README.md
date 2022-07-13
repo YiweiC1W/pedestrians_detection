@@ -1,17 +1,17 @@
 ## Installation Guide 
+#### Clone Repository
 1. git clone git@github.com:YiweiC1W/pedestrians_detection.git # or git clone  https://github.com/YiweiC1W/pedestrians_detection.git
 2. cd pedestrians_detection
+
+#### Create virtual environment
 3. conda create --name 9517gp python==3.8.13
 4. conda activate 9517gp
-5. pip install tensorrt
-6. pip install nvidia-pyindex
-7. pip install -r requirements.txt
-8. git clone https://github.com/Megvii-BaseDetection/YOLOX.git
-9. cd YOLOX
-10. pip install -U pip && pip install -r requirements.txt
-11. pip install -v -e .
 
-!注意上一步最后有一个 '.' 符号  
+#### Install dependencies according to your system
+5. sh install_linux.sh # For Linux 
+6. install_win64.bat # For Windows
+
+
 
 ## Run
 
