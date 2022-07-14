@@ -17,7 +17,7 @@ from tracker import Tracker
 from visualizer import plot_tracker, plot_task2, plot_task3
 
 IMAGE_EXT = [".jpg", ".jpeg", ".webp", ".bmp", ".png"]
-IMAGE_FOLDER_PATH = "./train/STEP-ICCV21-09/"
+IMAGE_FOLDER_PATH = "./train/STEP-ICCV21-02/"
 x1, y1, x2, y2, is_drawing, is_drawing_completed = -1, -1, -1, -1, False, False
 original_start_img = None
 display_img = None
@@ -159,10 +159,9 @@ def is_overlap(bbox1, bbox2):
 def get_distance(bbox1, bbox2):
     mid_x_1 = (bbox1[0] + bbox1[2]) / 2
     mid_x_2 = (bbox2[0] + bbox2[2]) / 2
-    bottom_y_1 = bbox1[3]
-    bottom_y_2 = bbox2[3]
-    distance = math.sqrt((mid_x_1 - mid_x_2) ** 2 + (bottom_y_1 - bottom_y_2) ** 2)
-    return distance
+    mid_y_1 = (bbox1[1] + bbox1[3]) / 2
+    mid_y_2 = (bbox2[1] + bbox2[3]) / 2
+    return math.sqrt((mid_x_1 - mid_x_2) ** 2 + (mid_y_1 - mid_y_2) ** 2)
 
 
 def in_group(current_distance_matrix, previous_distance_matrix, boxes, distance_threshold=100):
@@ -172,15 +171,19 @@ def in_group(current_distance_matrix, previous_distance_matrix, boxes, distance_
         if len (boxes) and boxes[i] is not None:
             person_1 = boxes[i]
             w1 = person_1[2] - person_1[0]
+            h1 = person_1[3] - person_1[1]
         for j in range(len(current_distance_matrix[i])):
             if len(boxes) and boxes[j] is not None and boxes[i] is not None:
                 person_2 = boxes[j]
                 w2 = person_2[2] - person_2[0]
-                distance_threshold = (w1 + w2) / 1.8
+                h2 = person_2[3] - person_2[1]
+                distance_threshold = (w1 + w2) / 1.5
             if current_distance_matrix[i][j] < distance_threshold:
                 if i < len(previous_distance_matrix) and j < len(previous_distance_matrix[i]):
                     if previous_distance_matrix[i][j] < distance_threshold and i != j:
-                        result[i][j] = 1
+                        if abs( h1 - h2 )/h1 < 0.4:
+                            result[i][j] = 1
+
     return result
 
 
