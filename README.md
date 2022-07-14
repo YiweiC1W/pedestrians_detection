@@ -1,6 +1,9 @@
 ## Installation Guide 
 #### Clone Repository
-1. git clone git@github.com:YiweiC1W/pedestrians_detection.git # or git clone  https://github.com/YiweiC1W/pedestrians_detection.git
+1. git clone git@github.com:YiweiC1W/pedestrians_detection.git
+
+     or  git clone  https://github.com/YiweiC1W/pedestrians_detection.git
+
 2. cd pedestrians_detection
 
 #### Create virtual environment
