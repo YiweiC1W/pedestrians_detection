@@ -6,7 +6,6 @@ from YOLOX.yolox.utils.visualize import _COLORS
 def plot_tracker(img, boxes, paths):
     for i in range(len(boxes)):
         box = boxes[i]
-
         x0 = int(box[0])
         y0 = int(box[1])
         x1 = int(box[2])
@@ -51,5 +50,30 @@ def plot_tracker(img, boxes, paths):
         # img[mid_x][mid_y] = color
 
         cv2.putText(img, text, (x0, y0 + txt_size[1]), font, 0.4, txt_color, thickness=1)
+
+    return img
+
+
+def plot_task2(img, boxes, user_rectangle, unique_ids, nbs_in):
+    count_of_unique_ids = 'Unique pedestrians detected: ' + str(len(unique_ids))
+    count_of_current_person = 'Current person: ' + str(len(boxes))
+    count_of_nbs_in = 'Within region: ' + str(len(nbs_in))
+    txt_color = (255, 255, 255)
+
+    cv2.putText(img, count_of_unique_ids, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.4, txt_color, thickness=1)
+    cv2.putText(img, count_of_current_person, (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.4, txt_color, thickness=1)
+    cv2.putText(img, count_of_nbs_in, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.4, txt_color, thickness=1)
+    cv2.rectangle(img, (user_rectangle[0], user_rectangle[1]), (user_rectangle[2], user_rectangle[3]), (0, 0, 255), 2)
+
+    for i in range(len(boxes)):
+        box = boxes[i]
+        x0 = int(box[0])
+        y0 = int(box[1])
+        x1 = int(box[2])
+        y1 = int(box[3])
+
+        cv2.rectangle(img, (x0, y0), (x1, y1), color=(10,250,0), thickness=2)
+
+
 
     return img

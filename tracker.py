@@ -37,7 +37,7 @@ def fix_box(boxes):
 
 
 class Tracker(object):
-    def __init__(self):
+    def __init__(self, use_cuda=False):
         self.deep_sort = DeepSort(
             model_path= config['MODEL'],
             max_dist= config['MAX_DIST'],
@@ -47,7 +47,7 @@ class Tracker(object):
             max_age= config['MAX_AGE'],
             n_init= config['N_INIT'],
             nn_budget= config['NN_BUDGET'],
-            use_cuda = False
+            use_cuda = use_cuda
         )
 
     def update(self, img, bboxs, scores):

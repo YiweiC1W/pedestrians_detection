@@ -8,7 +8,7 @@
 4. conda activate 9517gp
 
 #### Install dependencies according to your system
-5. sh install_linux.sh # For Linux 
+5. sh install_linux.sh # For Linux and Mac
 6. install_win64.bat # For Windows
 
 
@@ -21,18 +21,20 @@ please edit IMAGE_FOLDER_PATH in task1.py
 
 or you can use args '--path' to choose your image folder
 
+'--task' to choose your task eg: '--task 1' or '--task 2'
+
 '--conf' to choose your confidence threshold
 
 '--device' to choose your device 'cpu' or 'gpu'
 
-'--video' bool(true or false), if you want to save video, default is true
+'--video' bool(true or false), if you want to save video, default is false
 
-'--picture' bool(true or false), if you want to save picture, default is true
+'--picture' bool(true or false), if you want to save picture, default is false
 
 
 
 ### run example
-python task1.py
+python main.py --task 1
 
 
 ## 如何更新代码
