@@ -1,6 +1,9 @@
 import argparse
+import math
 import os
 import time
+
+import numpy as np
 import torch
 import cv2
 import sys
@@ -11,7 +14,7 @@ from yolox.exp import get_exp
 
 from extractor import Extractor
 from tracker import Tracker
-from visualizer import plot_tracker, plot_task2
+from visualizer import plot_tracker, plot_task2, plot_task3
 
 IMAGE_EXT = [".jpg", ".jpeg", ".webp", ".bmp", ".png"]
 IMAGE_FOLDER_PATH = "./train/STEP-ICCV21-09/"
@@ -153,6 +156,34 @@ def is_overlap(bbox1, bbox2):
     return True
 
 
+def get_distance(bbox1, bbox2):
+    mid_x_1 = (bbox1[0] + bbox1[2]) / 2
+    mid_x_2 = (bbox2[0] + bbox2[2]) / 2
+    bottom_y_1 = bbox1[3]
+    bottom_y_2 = bbox2[3]
+    distance = math.sqrt((mid_x_1 - mid_x_2) ** 2 + (bottom_y_1 - bottom_y_2) ** 2)
+    return distance
+
+
+def in_group(current_distance_matrix, previous_distance_matrix, boxes, distance_threshold=100):
+
+    result = np.zeros(current_distance_matrix.shape)
+    for i in range(len(current_distance_matrix)):
+        if len (boxes) and boxes[i] is not None:
+            person_1 = boxes[i]
+            w1 = person_1[2] - person_1[0]
+        for j in range(len(current_distance_matrix[i])):
+            if len(boxes) and boxes[j] is not None and boxes[i] is not None:
+                person_2 = boxes[j]
+                w2 = person_2[2] - person_2[0]
+                distance_threshold = (w1 + w2) / 1.8
+            if current_distance_matrix[i][j] < distance_threshold:
+                if i < len(previous_distance_matrix) and j < len(previous_distance_matrix[i]):
+                    if previous_distance_matrix[i][j] < distance_threshold and i != j:
+                        result[i][j] = 1
+    return result
+
+
 def task_2(args, extractor, tracker, save_folder, files):
     global x1, y1, x2, y2, is_drawing, is_drawing_completed, original_start_img, display_img
     result_files = []
@@ -217,7 +248,84 @@ def task_2(args, extractor, tracker, save_folder, files):
 
 
 def task_3(args, extractor, tracker, save_folder, files):
-    pass
+    result_files = []
+    distance_matrices = []
+    for i, image_name in enumerate(files):
+        img = cv2.imread(image_name)
+
+        print("Processing {}".format(image_name))
+
+        img_filename = os.path.basename(image_name)
+        img_info = extractor.extract(img, img_filename)
+        tracking_info = tracker.update(img, img_info["bboxes"], img_info["scores"])
+
+        groups = [] # [set(person_ids), set(person_ids), ...]
+        person_ids = [bbox[4] for bbox in tracking_info]
+        result_image = img.copy()
+        if len(tracking_info):
+            boxes = [None] * (max(person_ids) + 1)
+            distance_matrix = np.full((max(person_ids) + 1, max(person_ids) + 1), np.inf)
+            for z, bbox in enumerate(tracking_info):
+                person_id = bbox[4]
+                person_box = (bbox[0], bbox[1], bbox[2], bbox[3])
+                boxes[person_id] = person_box
+                for j, bbox2 in enumerate(tracking_info):
+                    person_id2 = bbox2[4]
+                    person_box2 = (bbox2[0], bbox2[1], bbox2[2], bbox2[3])
+                    dist = get_distance(person_box, person_box2)
+                    distance_matrix[person_id][person_id2] = dist
+                    distance_matrix[person_id2][person_id] = dist
+            distance_matrices.append(distance_matrix)
+
+            if i > 0:
+                last_frame_distance_matrix = distance_matrices[-1]
+                connectivity_matrix = in_group(distance_matrix, last_frame_distance_matrix, boxes)
+                for person_id_i in range(1, len(connectivity_matrix)):
+                    for person_id_j in range(1, len(connectivity_matrix[person_id_i])):
+                        if connectivity_matrix[person_id_i][person_id_j] == 1:
+                            already_in_group = False
+                            for group in groups:
+                                if person_id_i in group:
+                                    group.add(person_id_j)
+                                    already_in_group = True
+                                    break
+                                if person_id_j in group:
+                                    group.add(person_id_i)
+                                    already_in_group = True
+                                    break
+                            if not already_in_group:
+                                groups.append({person_id_i, person_id_j})
+
+                id_in_group = set()
+                for group in groups:
+                    for person_id in group:
+                        id_in_group.add(person_id)
+                nbs_not_in_group = len(set(person_ids)) - len(id_in_group)
+                result_image = plot_task3(img, boxes, groups, len(id_in_group), nbs_not_in_group)
+
+
+        cv2.namedWindow('Task3')
+        cv2.imshow('Task3', result_image)
+        cv2.waitKey(1)
+
+        if args.picture or args.video:
+            os.makedirs(save_folder, exist_ok=True)
+        result_files.append(result_image)
+
+        if args.picture:
+            save_file_name = os.path.join(save_folder, os.path.basename(image_name))
+            print("Saving detection result in {}".format(save_file_name))
+            cv2.imwrite(save_file_name, result_image)
+
+    if args.video:
+        save_video_name = os.path.join(save_folder, args.name + ".avi")
+        print("Saving video in {}".format(save_video_name))
+        video_writer = cv2.VideoWriter(save_video_name, cv2.VideoWriter_fourcc(*'DIVX'), 30,
+                                       (result_files[0].shape[1], result_files[0].shape[0]))
+        for result_image in result_files:
+            video_writer.write(result_image)
+        video_writer.release()
+
 
 
 
@@ -252,9 +360,8 @@ if __name__ == "__main__":
     tracker = Tracker(args.device == "gpu")
 
     save_folder = os.path.join(
-        'outputs/', args.name + '/', time.strftime("%Y_%m_%d_%H_%M_%S", current_time)
+        'outputs/', args.name + '/', time.strftime("%Y_%m_%d_%H_%M_%S", current_time) + 'task_' + str(args.task)
     )
-
 
     if args.task == 1:
         task_1(args, extractor, tracker, save_folder, files)

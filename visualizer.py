@@ -74,6 +74,40 @@ def plot_task2(img, boxes, user_rectangle, unique_ids, nbs_in):
 
         cv2.rectangle(img, (x0, y0), (x1, y1), color=(10,250,0), thickness=2)
 
+    return img
 
+def plot_task3(img, boxes, groups, nbs_in_groups, nbs_not_in_groups):
+    nbs_in_groups = 'Within group: ' + str(nbs_in_groups)
+    nbs_not_in_groups = 'Not in group: ' + str(nbs_not_in_groups)
+    for i, group in enumerate(groups):
+        person = group.pop()
+        group_x0 = boxes[person][0]
+        group_y0 = boxes[person][1]
+        group_x1 = boxes[person][2]
+        group_y1 = boxes[person][3]
 
+        for person_id in group:
+            box = boxes[person_id]
+            if box is None:
+                continue
+            x0 = int(box[0])
+            y0 = int(box[1])
+            x1 = int(box[2])
+            y1 = int(box[3])
+            if x0 < group_x0:
+                group_x0 = x0
+            if y0 < group_y0:
+                group_y0 = y0
+            if x1 > group_x1:
+                group_x1 = x1
+            if y1 > group_y1:
+                group_y1 = y1
+
+        color_ = _COLORS[i % _COLORS.shape[0]]
+        color = (color_ * 255).astype(np.uint8).tolist()
+        color = (0,0,255)
+
+        cv2.rectangle(img, (group_x0, group_y0), (group_x1, group_y1), color, 2)
+    cv2.putText(img, nbs_in_groups, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), thickness=1)
+    cv2.putText(img, nbs_not_in_groups, (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), thickness=1)
     return img
