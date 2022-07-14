@@ -195,7 +195,7 @@ def task_2(args, extractor, tracker, save_folder, files):
 
         result_image = plot_task2(img, tracking_info, user_rectangle, unique_person_ids, person_ids_in)
         cv2.imshow('Task2', result_image)
-        key = cv2.waitKey(1)  # delay 200ms
+        cv2.waitKey(1)
 
         if args.picture or args.video:
             os.makedirs(save_folder, exist_ok=True)
