@@ -22,6 +22,7 @@ x1, y1, x2, y2, is_drawing, is_drawing_completed = -1, -1, -1, -1, False, False
 original_start_img = None
 display_img = None
 
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 def make_parser():
     parser = argparse.ArgumentParser("Pedestrian Detector!")
@@ -87,6 +88,10 @@ def get_image_list(path):
 def task_1(args, extractor, tracker, save_folder, files):
     result_files = []
 
+    save_masked_folder = os.path.join(
+        'outputs_masked/', args.name + '/', time.strftime("%Y_%m_%d_%H_%M_%S", current_time) + 'task_' + str(args.task)
+    )
+
     paths = {} # {person_id: [bbox_1, bbox_2, ...]}
     for i, image_name in enumerate(files):
 
@@ -95,10 +100,12 @@ def task_1(args, extractor, tracker, save_folder, files):
         img_info = extractor.extract(img, img_filename)
         tracking_info = tracker.update(img, img_info["bboxes"], img_info["scores"])
 
+        mask = np.zeros_like(img)
         # add path for each person
         # bbox[0]: x0, bbox[1]: y0, bbox[2]: x1, bbox[3]: y1
         # bbox[4]: person_id
         for bbox in tracking_info:
+            mask[bbox[0]:bbox[2], bbox[1]:bbox[3]] = img[bbox[0]:bbox[2], bbox[1]:bbox[3]]
             person_id = bbox[4]
             if person_id not in paths:
                 paths[person_id] = [None] * i
@@ -113,7 +120,7 @@ def task_1(args, extractor, tracker, save_folder, files):
             os.makedirs(save_folder, exist_ok=True)
         result_files.append(result_image)
         cv2.namedWindow('Task2')
-        cv2.imshow('Task1', result_image)
+        cv2.imshow('Task1', mask)
         cv2.waitKey(1)
 
 
@@ -121,6 +128,10 @@ def task_1(args, extractor, tracker, save_folder, files):
             save_file_name = os.path.join(save_folder, os.path.basename(image_name))
             print("Saving detection result in {}".format(save_file_name))
             cv2.imwrite(save_file_name, result_image)
+
+            save_masked_file_name = os.path.join(save_masked_folder, os.path.basename(image_name))
+            print("Saving detection result in {}".format(save_masked_file_name))
+
 
 
     if args.video:
