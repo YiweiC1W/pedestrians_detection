@@ -8,6 +8,7 @@ import torch
 import cv2
 import sys
 sys.path.append(os.getcwd() + '/YOLOX')
+import copy
 
 from yolox.exp import get_exp
 
@@ -17,7 +18,7 @@ from tracker import Tracker
 from visualizer import plot_tracker, plot_task2, plot_task3
 
 IMAGE_EXT = [".jpg", ".jpeg", ".webp", ".bmp", ".png"]
-IMAGE_FOLDER_PATH = "./train/STEP-ICCV21-02/"
+IMAGE_FOLDER_PATH = "./train/STEP-ICCV21-09"
 x1, y1, x2, y2, is_drawing, is_drawing_completed = -1, -1, -1, -1, False, False
 original_start_img = None
 display_img = None
@@ -98,11 +99,21 @@ def task_1(args, extractor, tracker, save_folder, files):
         # add path for each person
         # bbox[0]: x0, bbox[1]: y0, bbox[2]: x1, bbox[3]: y1
         # bbox[4]: person_id
+
+        mask = np.zeros(img.shape, dtype=np.uint8)
+
         for bbox in tracking_info:
             person_id = bbox[4]
+
+            mask[bbox[1]:bbox[3], bbox[0]:bbox[2]] = img[bbox[1]:bbox[3], bbox[0]:bbox[2]]
+
             if person_id not in paths:
                 paths[person_id] = [None] * i
             paths[person_id].append(bbox)
+
+        save_mask_name = save_folder + "/" +  os.path.basename(image_name) + "_mask.png"
+        cv2.imwrite(save_mask_name, mask)
+
         for person_id in paths:
             if len(paths[person_id]) < i + 1:
                 paths[person_id].append(None)
@@ -112,7 +123,7 @@ def task_1(args, extractor, tracker, save_folder, files):
         if args.picture or args.video:
             os.makedirs(save_folder, exist_ok=True)
         result_files.append(result_image)
-        cv2.namedWindow('Task2')
+        cv2.namedWindow('Task1')
         cv2.imshow('Task1', result_image)
         cv2.waitKey(1)
 
@@ -121,6 +132,7 @@ def task_1(args, extractor, tracker, save_folder, files):
             save_file_name = os.path.join(save_folder, os.path.basename(image_name))
             print("Saving detection result in {}".format(save_file_name))
             cv2.imwrite(save_file_name, result_image)
+
 
 
     if args.video:
@@ -159,12 +171,15 @@ def is_overlap(bbox1, bbox2):
 def get_distance(bbox1, bbox2):
     mid_x_1 = (bbox1[0] + bbox1[2]) / 2
     mid_x_2 = (bbox2[0] + bbox2[2]) / 2
-    mid_y_1 = (bbox1[1] + bbox1[3]) / 2
-    mid_y_2 = (bbox2[1] + bbox2[3]) / 2
-    return math.sqrt((mid_x_1 - mid_x_2) ** 2 + (mid_y_1 - mid_y_2) ** 2)
+    bottom_y_1 = bbox1[3]
+    bottom_y_2 = bbox2[3]
+    return math.sqrt((0.8 * (mid_x_1 - mid_x_2)) ** 2 + (1.2*(bottom_y_1 - bottom_y_2)) ** 2)
+    #mid_y_1 = (bbox1[1] + bbox1[3]) / 2
+    #mid_y_2 = (bbox2[1] + bbox2[3]) / 2
+    #return math.sqrt((mid_x_1 - mid_x_2) ** 2 + (mid_y_1 - mid_y_2) ** 2)
 
 
-def in_group(current_distance_matrix, previous_distance_matrix, boxes, distance_threshold=100):
+def in_group(current_distance_matrix, previous_distance_matrix, previous_2_distance_matrix, boxes, distance_threshold=100):
 
     result = np.zeros(current_distance_matrix.shape)
     for i in range(len(current_distance_matrix)):
@@ -177,12 +192,16 @@ def in_group(current_distance_matrix, previous_distance_matrix, boxes, distance_
                 person_2 = boxes[j]
                 w2 = person_2[2] - person_2[0]
                 h2 = person_2[3] - person_2[1]
-                distance_threshold = (w1 + w2) / 1.5
+                distance_threshold = (w1 + w2) / 2
             if current_distance_matrix[i][j] < distance_threshold:
                 if i < len(previous_distance_matrix) and j < len(previous_distance_matrix[i]):
                     if previous_distance_matrix[i][j] < distance_threshold and i != j:
                         if abs( h1 - h2 )/h1 < 0.4:
                             result[i][j] = 1
+            elif previous_2_distance_matrix is not None and i < len(previous_distance_matrix) and j < len(previous_distance_matrix[i]) and previous_distance_matrix[i][j] < distance_threshold and i != j:
+                if i < len(previous_2_distance_matrix) and j < len(previous_2_distance_matrix[i]):
+                    if previous_2_distance_matrix[i][j] < distance_threshold:
+                        result[i][j] = 1
 
     return result
 
@@ -253,10 +272,15 @@ def task_2(args, extractor, tracker, save_folder, files):
 def task_3(args, extractor, tracker, save_folder, files):
     result_files = []
     distance_matrices = []
+    last_frame_groups = []
+    last_frame_boxes = []
+    last_frame_person_ids = set()
     for i, image_name in enumerate(files):
+
         img = cv2.imread(image_name)
 
         print("Processing {}".format(image_name))
+        print("Last frame groups:", last_frame_groups)
 
         img_filename = os.path.basename(image_name)
         img_info = extractor.extract(img, img_filename)
@@ -282,7 +306,10 @@ def task_3(args, extractor, tracker, save_folder, files):
 
             if i > 0:
                 last_frame_distance_matrix = distance_matrices[-1]
-                connectivity_matrix = in_group(distance_matrix, last_frame_distance_matrix, boxes)
+                last_2_frame_distance_matrix = None
+                if len(distance_matrices) > 1:
+                    last_2_frame_distance_matrix = distance_matrices[-2]
+                connectivity_matrix = in_group(distance_matrix, last_frame_distance_matrix, last_2_frame_distance_matrix, boxes)
                 for person_id_i in range(1, len(connectivity_matrix)):
                     for person_id_j in range(1, len(connectivity_matrix[person_id_i])):
                         if connectivity_matrix[person_id_i][person_id_j] == 1:
@@ -298,13 +325,76 @@ def task_3(args, extractor, tracker, save_folder, files):
                                     break
                             if not already_in_group:
                                 groups.append({person_id_i, person_id_j})
+                ungrouping_person_ids = set()
+                forming_groups = []
+                for group in groups:
+                    for person_id in group:
+                        person_enter = True
+
+                        for l_group in last_frame_groups:
+                            if person_id in l_group:
+                                person_enter = False
+                                break
+                        if person_enter:
+                            need_append = True
+                            for f_group in forming_groups:
+                                if person_id in f_group:
+                                    need_append = False
+                            if need_append:
+                                forming_groups.append(group)
+
+                for l_group in last_frame_groups:
+                    for person_id in l_group:
+                        person_leave = True
+                        for group in groups:
+                            if person_id in group:
+                                person_leave = False
+                                break
+                        if person_leave:
+                            ungrouping_person_ids.add(person_id)
+
 
                 id_in_group = set()
+
+                # merge groups
+                # filter none groups
+                groups = [group for group in groups if group is not None and len(group) >= 1]
+                for x in range(len(groups)):
+                    group_x = groups[x]
+                    if group_x is None:
+                        continue
+                    for y in range(x + 1, len(groups)):
+                        group_y = groups[y]
+                        for person_id in group_x:
+                            if group_y is not None and person_id in group_y:
+                                groups[x] = group_x.union(group_y)
+                                groups[y] = None
+                                break
+                groups = [group for group in groups if group is not None and len(group) >= 1]
+
                 for group in groups:
                     for person_id in group:
                         id_in_group.add(person_id)
-                nbs_not_in_group = len(set(person_ids)) - len(id_in_group)
-                result_image = plot_task3(img, boxes, groups, len(id_in_group), nbs_not_in_group)
+                person_ids_set = set(person_ids)
+                nbs_not_in_group = len(person_ids_set) - len(id_in_group)
+
+                intersection = last_frame_person_ids.intersection(person_ids_set)
+                leave_ids = last_frame_person_ids.difference(intersection)
+                enter_ids = person_ids_set.difference(intersection)
+                leave_ids = list(leave_ids)
+                enter_ids = list(enter_ids)
+
+                print("Groups:" + str(groups))
+                print("Leaving ids:" + str(ungrouping_person_ids))
+                print("Forming groups:" + str(forming_groups))
+                forming_groups = copy.deepcopy(forming_groups)
+                new_last_frame_groups = []
+                for group in groups:
+                    new_last_frame_groups.append(copy.deepcopy(group))
+                result_image = plot_task3(img, boxes, groups, forming_groups, ungrouping_person_ids, leave_ids, enter_ids, last_frame_boxes, len(id_in_group), nbs_not_in_group)
+                last_frame_groups = copy.deepcopy(new_last_frame_groups)
+                last_frame_boxes = copy.deepcopy(boxes)
+                last_frame_person_ids = copy.deepcopy(person_ids_set)
 
 
         cv2.namedWindow('Task3')
