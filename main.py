@@ -57,7 +57,7 @@ def make_parser():
         default="weights/yolox_s.pth",
         help="path to weights file"
     )
-    parser.add_argument("--conf", default=0.5, type=float, help="confidence threshold")
+    parser.add_argument("--conf", default=0.7, type=float, help="confidence threshold")
     parser.add_argument("--nms", default=0.4, type=float, help="nms threshold")
     parser.add_argument(
         "--video",
@@ -89,6 +89,7 @@ def task_1(args, extractor, tracker, save_folder, files):
     result_files = []
 
     paths = {} # {person_id: [bbox_1, bbox_2, ...]}
+    linked_paths = {} # {person_id: [0, 1, ...]}
     for i, image_name in enumerate(files):
 
         img = cv2.imread(image_name)
@@ -100,25 +101,40 @@ def task_1(args, extractor, tracker, save_folder, files):
         # bbox[0]: x0, bbox[1]: y0, bbox[2]: x1, bbox[3]: y1
         # bbox[4]: person_id
 
-        mask = np.zeros(img.shape, dtype=np.uint8)
+        #mask = np.zeros(img.shape, dtype=np.uint8)
 
         for bbox in tracking_info:
             person_id = bbox[4]
 
-            mask[bbox[1]:bbox[3], bbox[0]:bbox[2]] = img[bbox[1]:bbox[3], bbox[0]:bbox[2]]
+            #mask[bbox[1]:bbox[3], bbox[0]:bbox[2]] = img[bbox[1]:bbox[3], bbox[0]:bbox[2]]
 
             if person_id not in paths:
                 paths[person_id] = [None] * i
+            last_bbox = paths[person_id][-1]
             paths[person_id].append(bbox)
 
-        save_mask_name = save_folder + "/" +  os.path.basename(image_name) + "_mask.png"
-        cv2.imwrite(save_mask_name, mask)
+            if person_id not in linked_paths:
+                linked_paths[person_id] = [0] * i
+            if last_bbox is not None:
+                if is_overlap(bbox, last_bbox):
+                    linked_paths[person_id].append(1)
+                else:
+                    linked_paths[person_id].append(0)
+            else:
+                linked_paths[person_id].append(0)
+
+
+
+        #save_mask_name = save_folder + "/" +  os.path.basename(image_name) + "_mask.png"
+        #cv2.imwrite(save_mask_name, mask)
 
         for person_id in paths:
             if len(paths[person_id]) < i + 1:
                 paths[person_id].append(None)
+            if len(linked_paths[person_id]) < i + 1:
+                linked_paths[person_id].append(0)
 
-        result_image = plot_tracker(img, tracking_info, paths)
+        result_image = plot_tracker(img, tracking_info, paths, linked_paths)
 
         if args.picture or args.video:
             os.makedirs(save_folder, exist_ok=True)

@@ -3,7 +3,7 @@ import numpy as np
 from YOLOX.yolox.utils.visualize import _COLORS
 
 
-def plot_tracker(img, boxes, paths):
+def plot_tracker(img, boxes, paths, linked_paths):
     for i in range(len(boxes)):
         box = boxes[i]
         x0 = int(box[0])
@@ -16,6 +16,7 @@ def plot_tracker(img, boxes, paths):
         color = (color_ * 255).astype(np.uint8).tolist()
 
         path_history = paths[person_id]
+        linked_path_history = linked_paths[person_id]
         for i, path in enumerate(path_history):
             if path is not None:
                 current_x = int((path[0] + path[2]) / 2)
@@ -25,7 +26,9 @@ def plot_tracker(img, boxes, paths):
                     if path_history[j] is not None:
                         previous_x = int((path_history[j][0] + path_history[j][2]) / 2)
                         previous_y = int((path_history[j][1] + path_history[j][3]) / 2)
-                        cv2.line(img, (current_x, current_y), (previous_x, previous_y), color, 2)
+                        distance = np.sqrt((current_x - previous_x) ** 2 + (current_y - previous_y) ** 2)
+                        if distance <= 100:
+                            cv2.line(img, (current_x, current_y), (previous_x, previous_y), color, 2)
                         current_x = previous_x
                         current_y = previous_y
 
