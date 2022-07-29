@@ -33,7 +33,7 @@ HOGCV.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 # output_path = '/Users/chenhanxian/PycharmProjects/pythonProject/9517/SVM+hog+更改中心点/output'
 img_path = "./train/STEP-ICCV21-02/"
 # img_path = '/Users/chenhanxian/PycharmProjects/pythonProject/9517/SVM+hog/test_img/'
-output_path = './svm_output1/'
+output_path = './svm_output2/'
 ii=0
 for filename in sorted(os.listdir(img_path)):
 
@@ -48,6 +48,10 @@ for filename in sorted(os.listdir(img_path)):
     width = int(img.shape[1] * scale_ratio)
     height = int(img.shape[0] * scale_ratio)
     img = cv2.resize(img, (width, height))
+    img_r = cv2.equalizeHist(img[:, :, 0])
+    img_b = cv2.equalizeHist(img[:, :, 1])
+    img_g = cv2.equalizeHist(img[:, :, 2])
+    img = cv2.merge((img_r, img_b, img_g))
     # print(img.shape)
 
     #使用Hog人形非类器
@@ -100,8 +104,8 @@ for filename in sorted(os.listdir(img_path)):
             thickness = int(np.sqrt(trajectory_length / float(j + 1)) * 2)
             cv2.line(img, (pts[objectID][j - 1]), pts[objectID][j], color, thickness)
 
-    # cv2.imshow('Task1', img)
-    # cv2.waitKey(1)
+    cv2.imshow('Task1', img)
+    cv2.waitKey(1)
     cv2.imwrite(output_path + "/" + filename, img)
 
 

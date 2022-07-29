@@ -86,17 +86,22 @@ def get_image_list(path):
     return image_names
 
 
+
 def task_1(args, extractor, tracker, save_folder, files):
     result_files = []
 
     save_masked_folder = os.path.join(
-        'outputs_masked/', args.name + '/', time.strftime("%Y_%m_%d_%H_%M_%S", current_time)
+        'outputs_masked_hist_eq/', args.name + '/', time.strftime("%Y_%m_%d_%H_%M_%S", current_time)
     )
 
     paths = {} # {person_id: [bbox_1, bbox_2, ...]}
     for i, image_name in enumerate(files):
 
         img = cv2.imread(image_name)
+        img_r = cv2.equalizeHist(img[:,:,0])
+        img_b = cv2.equalizeHist(img[:,:,1])
+        img_g = cv2.equalizeHist(img[:,:,2])
+        img = cv2.merge((img_r,img_b,img_g))
         img_filename = os.path.basename(image_name)
         img_info = extractor.extract(img, img_filename)
         tracking_info = tracker.update(img, img_info["bboxes"], img_info["scores"])
@@ -375,7 +380,7 @@ if __name__ == "__main__":
     tracker = Tracker(args.device == "gpu")
 
     save_folder = os.path.join(
-        'outputs/', args.name + '/', time.strftime("%Y_%m_%d_%H_%M_%S", current_time) + 'task_' + str(args.task)
+        'outputs_eq/', args.name + '/', time.strftime("%Y_%m_%d_%H_%M_%S", current_time) + 'task_' + str(args.task)
     )
 
     if args.task == 1:
