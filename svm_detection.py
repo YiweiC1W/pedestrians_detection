@@ -48,10 +48,12 @@ for filename in sorted(os.listdir(img_path)):
     width = int(img.shape[1] * scale_ratio)
     height = int(img.shape[0] * scale_ratio)
     img = cv2.resize(img, (width, height))
-    img_r = cv2.equalizeHist(img[:, :, 0])
-    img_b = cv2.equalizeHist(img[:, :, 1])
-    img_g = cv2.equalizeHist(img[:, :, 2])
-    img = cv2.merge((img_r, img_b, img_g))
+
+
+    # img_r = cv2.equalizeHist(img[:, :, 0])
+    # img_b = cv2.equalizeHist(img[:, :, 1])
+    # img_g = cv2.equalizeHist(img[:, :, 2])
+    # img = cv2.merge((img_r, img_b, img_g))
     # print(img.shape)
 
     #使用Hog人形非类器

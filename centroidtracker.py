@@ -63,6 +63,7 @@ class CentroidTracker():
 					continue
 
 				objectID = objectIDs[row]
+
 				dis=self.get_dist(inputbbx[col],self.objects[objectID])
 				if (dis>40):
 					print(dis)
