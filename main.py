@@ -18,7 +18,7 @@ from tracker import Tracker
 from visualizer import plot_tracker, plot_task2, plot_task3
 
 IMAGE_EXT = [".jpg", ".jpeg", ".webp", ".bmp", ".png"]
-IMAGE_FOLDER_PATH = "./train/STEP-ICCV21-09"
+IMAGE_FOLDER_PATH = "./test/STEP-ICCV21-07"
 x1, y1, x2, y2, is_drawing, is_drawing_completed = -1, -1, -1, -1, False, False
 original_start_img = None
 display_img = None
@@ -57,7 +57,7 @@ def make_parser():
         default="weights/yolox_s.pth",
         help="path to weights file"
     )
-    parser.add_argument("--conf", default=0.7, type=float, help="confidence threshold")
+    parser.add_argument("--conf", default=0.6, type=float, help="confidence threshold")
     parser.add_argument("--nms", default=0.4, type=float, help="nms threshold")
     parser.add_argument(
         "--video",
@@ -208,7 +208,7 @@ def in_group(current_distance_matrix, previous_distance_matrix, previous_2_dista
                 person_2 = boxes[j]
                 w2 = person_2[2] - person_2[0]
                 h2 = person_2[3] - person_2[1]
-                distance_threshold = (w1 + w2) / 2
+                distance_threshold = (w1 + w2) / 1.5
             if current_distance_matrix[i][j] < distance_threshold:
                 if i < len(previous_distance_matrix) and j < len(previous_distance_matrix[i]):
                     if previous_distance_matrix[i][j] < distance_threshold and i != j:
@@ -259,8 +259,14 @@ def task_2(args, extractor, tracker, save_folder, files):
             unique_person_ids.add(person_id)
             person_box = (bbox[0], bbox[1], bbox[2], bbox[3])
 
-            if is_overlap(user_rectangle, person_box):
-                person_ids_in.add(person_id)
+            centroid = (int((bbox[0] + bbox[2]) / 2), int((bbox[1] + bbox[3]) / 2))
+            if centroid[0] > user_rectangle[0] and centroid[0] < user_rectangle[2] and centroid[1] > user_rectangle[1] and centroid[1] < user_rectangle[3]:
+                 person_ids_in.add(person_id)
+
+
+            #if is_overlap(user_rectangle, person_box):
+            #    person_ids_in.add(person_id)
+
 
         result_image = plot_task2(img, tracking_info, user_rectangle, unique_person_ids, person_ids_in)
         cv2.imshow('Task2', result_image)
@@ -305,6 +311,7 @@ def task_3(args, extractor, tracker, save_folder, files):
         groups = [] # [set(person_ids), set(person_ids), ...]
         person_ids = [bbox[4] for bbox in tracking_info]
         result_image = img.copy()
+
         if len(tracking_info):
             boxes = [None] * (max(person_ids) + 1)
             distance_matrix = np.full((max(person_ids) + 1, max(person_ids) + 1), np.inf)
