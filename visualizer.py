@@ -61,11 +61,11 @@ def plot_task2(img, boxes, user_rectangle, unique_ids, nbs_in):
     count_of_unique_ids = 'Unique pedestrians detected: ' + str(len(unique_ids))
     count_of_current_person = 'Current person: ' + str(len(boxes))
     count_of_nbs_in = 'Within region: ' + str(len(nbs_in))
-    txt_color = (255, 255, 255)
+    txt_color = (0, 0, 255)
 
-    cv2.putText(img, count_of_unique_ids, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.4, txt_color, thickness=1)
-    cv2.putText(img, count_of_current_person, (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.4, txt_color, thickness=1)
-    cv2.putText(img, count_of_nbs_in, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.4, txt_color, thickness=1)
+    cv2.putText(img, count_of_unique_ids, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.8, txt_color, thickness=2)
+    cv2.putText(img, count_of_current_person, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.8, txt_color, thickness=2)
+    cv2.putText(img, count_of_nbs_in, (10, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.8, txt_color, thickness=2)
     cv2.rectangle(img, (user_rectangle[0], user_rectangle[1]), (user_rectangle[2], user_rectangle[3]), (0, 0, 255), 2)
 
     for i in range(len(boxes)):
@@ -156,14 +156,17 @@ def plot_task3(img, boxes, groups, forming_groups, leaving_person_ids, leave_ids
             y0 = int(box[1])
             x1 = int(box[2])
             y1 = int(box[3])
-            if j == 0:
+            if j == 0: # group leaving
                 color = (255,0,0)
-            elif j == 1:
+            elif j == 1: # scene leaving
                 color = (255,255,0)
-            elif j == 2:
+            elif j == 2:    # scene entering
                 color = (0,255,255)
             cv2.rectangle(img, (x0, y0), (x1, y1), color, 2)
 
-    cv2.putText(img, nbs_in_groups, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), thickness=1)
-    cv2.putText(img, nbs_not_in_groups, (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), thickness=1)
+    cv2.putText(img, nbs_in_groups, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), thickness=2)
+    cv2.putText(img, nbs_not_in_groups, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), thickness=2)
+    cv2.putText(img, 'Leaving Group', (10, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), thickness=2)
+    cv2.putText(img, 'Leaving Scene', (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,0), thickness=2)
+    cv2.putText(img, 'Entering Scene', (10, 125), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,255), thickness=2)
     return img

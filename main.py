@@ -18,7 +18,7 @@ from tracker import Tracker
 from visualizer import plot_tracker, plot_task2, plot_task3
 
 IMAGE_EXT = [".jpg", ".jpeg", ".webp", ".bmp", ".png"]
-IMAGE_FOLDER_PATH = "./test/STEP-ICCV21-07"
+IMAGE_FOLDER_PATH = "./test/STEP-ICCV21-01"
 x1, y1, x2, y2, is_drawing, is_drawing_completed = -1, -1, -1, -1, False, False
 original_start_img = None
 display_img = None
