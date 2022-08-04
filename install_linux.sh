@@ -1,5 +1,7 @@
 pip3 install nvidia-pyindex
 pip3 install -r requirements.txt
+pip3 install imutils
+python3 -m pip install -U scikit-image
 git clone https://github.com/YiweiC1W/9517dataset.git
 git clone https://github.com/Megvii-BaseDetection/YOLOX.git
 cd YOLOX

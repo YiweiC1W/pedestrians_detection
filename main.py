@@ -23,6 +23,18 @@ x1, y1, x2, y2, is_drawing, is_drawing_completed = -1, -1, -1, -1, False, False
 original_start_img = None
 display_img = None
 
+def hist_eq(img):
+    img_r = cv2.equalizeHist(img[:, :, 0])
+    img_b = cv2.equalizeHist(img[:, :, 1])
+    img_g = cv2.equalizeHist(img[:, :, 2])
+    img = cv2.merge((img_r, img_b, img_g))
+    return  img
+
+# Laplace
+def laplace(img):
+    kernel = np.array([[0, -1, 0], [0, 5, 0], [0, -1, 0]])  # 定义卷积核
+    img = cv2.filter2D(img, -1, kernel)  # 进行卷积运算
+    return img
 
 def make_parser():
     parser = argparse.ArgumentParser("Pedestrian Detector!")
