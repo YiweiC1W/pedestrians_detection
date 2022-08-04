@@ -1,18 +1,35 @@
 ## Installation Guide 
-#### Clone Repository
-1. git clone git@github.com:YiweiC1W/pedestrians_detection.git
+#### 1. Clone Repository (if you clone from github, use this step)
+1.1 Clone the repository from github
 
-     or  git clone  https://github.com/YiweiC1W/pedestrians_detection.git
+     git clone git@github.com:YiweiC1W/pedestrians_detection.git
 
-2. cd pedestrians_detection
+     git clone  https://github.com/YiweiC1W/pedestrians_detection.git
 
-#### Create virtual environment
-3. conda create --name 9517gp python==3.8.13
-4. conda activate 9517gp
+1.2 cd to the directory
 
-#### Install dependencies according to your system
-5. sh install_linux.sh # For Linux (Ubuntu 20.04 is recommended) (maybe works on macOS too)
-6. install_win64.bat # For Windows (have not tested)
+     cd pedestrians_detection
+
+
+#### 1. Unzip Folder (if you downloaded the zip file, use this step)
+
+Unzip the folder
+
+cd into the project root folder (where the README.md is)
+
+#### 2. Create virtual environment
+2.1 Create virtual environment 
+   
+     conda create --name 9517gp python==3.8.13
+
+2.2 Activate the virtual environment
+
+     conda activate 9517gp
+
+#### 3. Install dependencies according to your system
+     sh install_linux.sh # For Linux (Ubuntu 20.04 is recommended) (maybe works on macOS too)
+
+     install_win64.bat # For Windows (have not tested)
 
 #### If you encounter any installation issues, please contact me at yiwei.chen2@student.unsw.edu.au
 
