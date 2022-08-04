@@ -11,8 +11,8 @@
 4. conda activate 9517gp
 
 #### Install dependencies according to your system
-5. sh install_linux.sh # For Linux and Mac
-6. install_win64.bat # For Windows
+5. sh install_linux.sh # For Linux (Ubuntu 20.04 is recommended!) (maybe works on macOS too)
+6. install_win64.bat # For Windows (have not tested)
 
 
 
@@ -30,24 +30,18 @@ or you can use args '--path' to choose your image folder
 
 '--device' to choose your device 'cpu' or 'gpu'
 
-'--video' bool(true or false), if you want to save video, default is false
+'--video' bool(true or false), if you want to save video
 
-'--picture' bool(true or false), if you want to save picture, default is false
+'--picture' bool(true or false), if you want to save picture
 
 
 
 ### run example
-python main.py --task 1
+ python main.py --task 1 --device cpu
 
 
-## 如何更新代码
+## Code Reference
 
-如果使用pycharm:  pycharm -> git 菜单 -> update project
+[1] https://github.com/nwojke/deep_sort
 
-
-如果使用git 命令行: git pull
-
-
-
-
-如果更新过程中有代码冲突， 尽量使用手动 merge 避免被覆盖。
+[2] https://github.com/Megvii-BaseDetection/YOLOX

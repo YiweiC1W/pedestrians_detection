@@ -40,7 +40,7 @@ def make_parser():
     )
     parser.add_argument(
         "--device",
-        default="gpu",
+        default="cpu",
         type=str,
         help="device to run our model, can either be cpu or gpu",
     )
