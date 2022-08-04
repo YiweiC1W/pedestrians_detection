@@ -26,10 +26,10 @@ cd into the project root folder (where the README.md is)
 
      conda activate 9517gp
 
-#### 3. Install dependencies according to your system
+#### 3.Run this All-in-One script to install dependencies, YOLOX, Download datasets and pre-trained weights (choose one according to your system)
      sh install_linux.sh # For Linux (Ubuntu 20.04 is recommended) (maybe works on macOS too)
 
-     install_win64.bat # For Windows (have not tested)
+     install_win64.bat # For Windows (not tested)
 
 #### If you encounter any installation issues, please contact me at yiwei.chen2@student.unsw.edu.au
 
