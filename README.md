@@ -1,5 +1,11 @@
 ## Installation Guide 
-#### 1. Clone Repository (if you clone from github, use this step)
+We strongly recommend you to run the following commands from the system shell or terminal.
+
+**DO NOT RUN these commands from any IDE terminal. There are some strange issues especially from PyCharm Terminal**
+
+
+
+### 1. Clone Repository (if you clone from github, use this step)
 1.1 Clone the repository from github
 
      git clone git@github.com:YiweiC1W/pedestrians_detection.git
@@ -11,13 +17,13 @@
      cd pedestrians_detection
 
 
-#### 1. Unzip Folder (if you downloaded the zip file, use this step)
+### 1. Unzip Folder (if you downloaded the zip file, use this step)
 
 Unzip the folder
 
 cd into the project root folder (where the README.md is)
 
-#### 2. Create virtual environment
+### 2. Create virtual environment
 2.1 Create virtual environment 
    
      conda create --name 9517gp python==3.8.13
@@ -26,12 +32,13 @@ cd into the project root folder (where the README.md is)
 
      conda activate 9517gp
 
-#### 3.Run this All-in-One script to install dependencies, YOLOX, Download datasets and pre-trained weights (choose one according to your system)
+### 3.Run this All-in-One script to install dependencies, YOLOX, Download datasets and pre-trained weights (choose one according to your system)
+
      sh install_linux.sh # For Linux (Ubuntu 20.04 is recommended) (maybe works on macOS too)
 
      install_win64.bat # For Windows (not tested)
 
-#### If you encounter any installation issues, please contact me at yiwei.chen2@student.unsw.edu.au
+If you encounter any installation issues, please contact me at yiwei.chen2@student.unsw.edu.au
 
 
 ## Run
