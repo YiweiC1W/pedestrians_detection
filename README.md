@@ -11,9 +11,10 @@
 4. conda activate 9517gp
 
 #### Install dependencies according to your system
-5. sh install_linux.sh # For Linux (Ubuntu 20.04 is recommended!) (maybe works on macOS too)
+5. sh install_linux.sh # For Linux (Ubuntu 20.04 is recommended) (maybe works on macOS too)
 6. install_win64.bat # For Windows (have not tested)
 
+#### If you encounter any installation issues, please contact me at yiwei.chen2@student.unsw.edu.au
 
 
 ## Run
