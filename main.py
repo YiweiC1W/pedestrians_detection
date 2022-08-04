@@ -54,7 +54,7 @@ def make_parser():
         "-w",
         "--weights",
         type=str,
-        default="weights/yolox_s.pth",
+        default="9517dataset/weights/yolox_s.pth",
         help="path to weights file"
     )
     parser.add_argument("--conf", default=0.6, type=float, help="confidence threshold")

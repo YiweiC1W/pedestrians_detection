@@ -2,7 +2,7 @@ from deep_sort import DeepSort
 import torch
 
 config = {
-    'MODEL': './weights/ckpt.t7',
+    'MODEL': './9517dataset/weights/ckpt.t7',
     'MAX_DIST': 0.2,
     'MIN_CONFIDENCE': 0.3,
     'NMS_MAX_OVERLAP': 1,
